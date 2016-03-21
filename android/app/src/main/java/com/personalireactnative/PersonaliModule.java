@@ -49,7 +49,7 @@ public class PersonaliModule extends ReactContextBaseJavaModule {
     message += "\nPRICE: " + props.getDouble("price");
     message += "\nNAME: " + props.getString("name");
     // toasting for instant notification
-    Toast.makeText(getReactApplicationContext(), message, Toast.LENGTH_LONG).show();
+    Toast.makeText(getReactApplicationContext(), message, Toast.LENGTH_SHORT).show();
 
     // (!) in case you need to handle API errors:
     // errorCallback.invoke({
@@ -62,13 +62,13 @@ public class PersonaliModule extends ReactContextBaseJavaModule {
     // so you can invoke them later
     final Boolean buttonDisplayStatus = true;
 
-    final String buttonLabel = "We got cookies :)";
+    final String buttonLabel = "We got cookies!";
 
     final WritableMap buttonStyleMap = Arguments.createMap();
-    buttonStyleMap.putString("color", "#FFFF00");
+    buttonStyleMap.putString("color", "#FFCC00");
     buttonStyleMap.putString("backgroundColor", "#040");
     buttonStyleMap.putString("fontFamily", "Arial");
-    buttonStyleMap.putInt("fontSize", 20);
+    buttonStyleMap.putInt("fontSize", 18);
 
     // successCallback.invoke(buttonDisplayStatus, buttonLabel, buttonStyleMap);
     new android.os.Handler().postDelayed(
@@ -80,8 +80,8 @@ public class PersonaliModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void negotiate(String sku) {
-    Toast.makeText(getReactApplicationContext(), "negotiate for SKU:\n" + sku, Toast.LENGTH_LONG).show();
+  public void negotiate(final String sku) {
+    Toast.makeText(getReactApplicationContext(), "negotiate for SKU:\n" + sku, Toast.LENGTH_SHORT).show();
     // open webview or whatever required and then send your 'negotiationResponse' event
     // to announce results.
     // meanwhile for this demo, i'm delaying the mocked response for 2 seconds
@@ -89,7 +89,8 @@ public class PersonaliModule extends ReactContextBaseJavaModule {
       new Runnable() {
           public void run() {
               WritableMap params = Arguments.createMap();
-              params.putString("status", "sababa");
+              params.putString("sku", sku);
+              params.putString("status", "done");
               getReactApplicationContext()
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("negotiationResponse", params);

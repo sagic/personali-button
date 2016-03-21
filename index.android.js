@@ -44,27 +44,30 @@ class personaliReactNative extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        product: dummyProducts[0]
+        productIndex: 0
     };
-    this.replaceProduct = this.replaceProduct.bind(this);
+    this.nextProduct = this.nextProduct.bind(this);
   }
 
-  replaceProduct() {
+  nextProduct() {
     this.setState({
-      product: dummyProducts[parseInt(Math.random() * dummyProducts.length)]
+      productIndex: this.state.productIndex >= dummyProducts.length - 1 ?
+        0 : this.state.productIndex + 1
     });
   }
 
   render() {
+    const product = dummyProducts[this.state.productIndex];
+
     return (
       <View style={styles.container}>
         <View>
-          <Button onPress={this.replaceProduct}>View random product</Button>
+          <Button onPress={this.nextProduct}>View next product</Button>
         </View>
         <ProductPageExample
-          productId={this.state.product.id}
-          productName={this.state.product.name}
-          price={this.state.product.price}
+          productId={product.id}
+          productName={product.name}
+          price={product.price}
           />
       </View>
     );

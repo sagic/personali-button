@@ -2,6 +2,7 @@ import React, {
   NativeModules,
   DeviceEventEmitter,
   View,
+  ScrollView,
   TouchableHighlight,
   Text,
   StyleSheet,
@@ -28,7 +29,8 @@ class PersonaliButton extends React.Component {
         container: {},
         text: {}
       },
-      viewSizeAnim: {
+      viewAnim: {
+        opacity: new Animated.Value(0),
         width: new Animated.Value(0),
         height: new Animated.Value(0),
       }
@@ -40,6 +42,9 @@ class PersonaliButton extends React.Component {
   componentDidMount() {
     DeviceEventEmitter.addListener('negotiationResponse', (event) => {
       console.log('negotiationResponse event: ', event);
+      if (this.props.onNegotiationResponse) {
+        this.props.onNegotiationResponse(event);
+      }
     });
     this.fetchPersonaliData(this.props);
   }
@@ -56,7 +61,9 @@ class PersonaliButton extends React.Component {
   }
 
   handlePress() {
-    PersonaliAndroid.negotiate(this.props.product.sku);
+    if (this.state.shouldDisplay) {
+      PersonaliAndroid.negotiate(this.props.product.sku);
+    }
   }
 
   fetchPersonaliData(props) {
@@ -87,39 +94,44 @@ class PersonaliButton extends React.Component {
   }
 
   render() {
-    let size;
+    let animParams;
 
     if (this.state.shouldDisplay) {
-      size = {
+      animParams = {
+        opacity: 1,
         width: this.props.viewSize.width,
         height: this.props.viewSize.height
       };
     } else {
-      size = {
+      animParams = {
+        opacity: 0,
         width: this.props.hiddenViewSize.width,
         height: this.props.hiddenViewSize.height
       };
     }
 
-    Animated.timing(
-      this.state.viewSizeAnim.width,
-      { toValue: size.width, duration: animationDuration, easing: animationEase }
+    Animated.timing(this.state.viewAnim.opacity,
+      { toValue: animParams.opacity, duration: animationDuration, easing: animationEase }
     ).start();
 
-    Animated.timing(
-      this.state.viewSizeAnim.height,
-      { toValue: size.height, duration: animationDuration, easing: animationEase }
+    Animated.timing(this.state.viewAnim.width,
+      { toValue: animParams.width, duration: animationDuration, easing: animationEase }
+    ).start();
+
+    Animated.timing(this.state.viewAnim.height,
+      { toValue: animParams.height, duration: animationDuration, easing: animationEase }
     ).start();
 
     return (
       <TouchableHighlight onPress={this.handlePress}>
         <Animated.View
           style={[styles.container, {
-            width: this.state.viewSizeAnim.width,
-            height: this.state.viewSizeAnim.height
+            opacity: this.state.viewAnim.opacity,
+            width: this.state.viewAnim.width,
+            height: this.state.viewAnim.height
           }, this.state.buttonStyle.container]}
           >
-          <Text style={this.state.buttonStyle.text}>{this.state.buttonLabel}</Text>
+          <Text style={[styles.text, this.state.buttonStyle.text]}>{this.state.buttonLabel}</Text>
         </Animated.View>
       </TouchableHighlight>
     );
@@ -141,7 +153,9 @@ PersonaliButton.propTypes = {
   hiddenViewSize: PropTypes.shape({
     width: PropTypes.number,
     height: PropTypes.number
-  })
+  }),
+  // mainly for debug but you can allow the client's app to make use of it
+  onNegotiationResponse: PropTypes.func
 };
 
 PersonaliButton.defaultProps = {
@@ -150,8 +164,8 @@ PersonaliButton.defaultProps = {
     height: 50
   },
   hiddenViewSize: {
-    width: 0,
-    height: 0
+    width: 100,
+    height: 50
   }
 };
 
@@ -160,6 +174,8 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  text: {
   }
 });
 

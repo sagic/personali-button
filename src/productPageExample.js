@@ -11,6 +11,11 @@ import PersonaliButton from './personali'
 class ProductPageExample extends React.Component {
   constructor(props) {
     super(props);
+
+    this.state = {
+      negotiationResponse: ''
+    };
+
     this.getPersonaliData = this.getPersonaliData.bind(this);
   }
 
@@ -36,9 +41,13 @@ class ProductPageExample extends React.Component {
         </View>
         <PersonaliButton
           product={personaliData}
-          hiddenViewSize={{ width:0, height:0 }}
-          viewSize={{ width:200, height:70 }}
+          hiddenViewSize={{ width:150, height:70 }}
+          viewSize={{ width:150, height:70 }}
+          onNegotiationResponse={(event) => this.setState({
+            negotiationResponse: JSON.stringify(event)
+          })}
           />
+        <Text>{this.state.negotiationResponse}</Text>
       </View>
     );
   }
