@@ -6,7 +6,7 @@ import React, {
 } from 'react-native'
 
 import Button from 'react-native-button'
-import PersonaliButton from './personali'
+import PersonaliButton from './personaliButton'
 
 class ProductPageExample extends React.Component {
   constructor(props) {
